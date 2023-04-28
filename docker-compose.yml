@@ -1,0 +1,14 @@
+version: '3'
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      SA_PASSWORD: "SqlServer201912345"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+  sql-command:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    depends_on:
+      - sqlserver
+    command: ["sh", "-c", "/opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P SqlServer201912345 -Q 'CREATE DATABASE mentoria_votes_db;'"]

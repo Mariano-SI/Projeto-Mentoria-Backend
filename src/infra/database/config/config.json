@@ -1,0 +1,9 @@
+{
+  "development": {
+    "username": "sa",
+    "password": "SqlServer201912345",
+    "database": "mentoria_votes_db",
+    "host": "localhost",
+    "dialect": "mssql"
+  }
+}
