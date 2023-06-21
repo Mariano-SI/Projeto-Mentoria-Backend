@@ -86,7 +86,7 @@ export default class ContestRepository {
     const query =`UPDATE Contests SET ${setStatementCollumns.join(",")} WHERE id=:id`
 
 
-    try {
+  
         const result = await this._dbConnection.query(
             query,
             {
@@ -98,11 +98,11 @@ export default class ContestRepository {
               },
             }
           );
+          if(result[1] === 0){
+            throw new Error("Nenhum registro foi encontrado");
+          }
           return result
-    } catch (error) {
-        console.log(error)
-    }
-    
+ 
   }
 
 
@@ -111,4 +111,3 @@ export default class ContestRepository {
 }
 
 
-//Para casa: Fazer o resto dos Dtos
