@@ -1,5 +1,6 @@
 import { QueryTypes, Sequelize } from "sequelize";
 import { UpdateContestInput } from "../domain/dtos/contests/updateContestInput";
+import { ContestEntity } from "../domain/entities/ContestEntity";
 
 export default class ContestRepository {
   private _dbConnection: Sequelize;
@@ -7,29 +8,46 @@ export default class ContestRepository {
     this._dbConnection = dbConnection;
   }
 
-  public async selectAllContests() {
+  public async selectAllContests():Promise<ContestEntity[]> {
     try {
-      const result = await this._dbConnection.query("SELECT * FROM Contests");
-      console.log(result)
-      return result;
+      const result:any[] = (await this._dbConnection.query("SELECT * FROM Contests"))[0];
+
+      if (result && result.length > 0) {
+        return result.map((item) => new ContestEntity(item.id, new Date(item.initial_date), new Date(item.final_date), item.active));
+      } else {
+        return []; // Retorna um array vazio caso não haja resultados.
+      }
     } catch (error) {
-      console.log(error);
+      console.log(error)
+      throw new Error("Erro ao selecionar contests");
     } finally {
       this._dbConnection.close();
     }
   }
 
-  public async selectConstestById(id:string) {
+  //Perguntar pro caio pq estamos tipando com classe ao inves de usar uma type ou interface
+  public async selectConstestById(id: string): Promise<ContestEntity | undefined> {
     try {
-        const result = await this._dbConnection.query(`SELECT * FROM Contests WHERE id=:id`,{
-            replacements:{
-                id:id
-            }
-        });
-        console.log(result)
-        return result;
+      const result: any[] = await this._dbConnection.query(`SELECT * FROM Contests WHERE id=:id`, {
+        replacements: {
+          id: id,
+        },
+      });
+
+      if (result && result.length > 0) {
+        const contestData = result[0][0];
+
+        const contest = new ContestEntity(
+          contestData.id,
+          new Date(contestData.initial_date),
+          new Date(contestData.final_date),
+          contestData.active
+        );
+  
+        return contest;
+      } 
     } catch (error) {
-        console.log(error)
+      throw(error)
     } finally{
         this._dbConnection.close()
     }
@@ -40,9 +58,10 @@ export default class ContestRepository {
       const result = await this._dbConnection.query(
         "INSERT INTO Contests DEFAULT VALUES"
       );
+      console.log(result)
       return result;
     } catch (error) {
-      console.log(error);
+      throw new Error("Não foi possivel criar o contest");
     } finally {
       this._dbConnection.close();
     }
@@ -53,7 +72,6 @@ export default class ContestRepository {
       const result = await this._dbConnection.query(
         "DELETE FROM Contests WHERE id=:id",
         {
-          /* type:QueryTypes.DELETE, */
           replacements: {
             id: id,
           },
@@ -61,15 +79,14 @@ export default class ContestRepository {
       );
       return result;
     } catch (error) {
-      console.log(error);
+      throw new Error("Não foi possivel deletar o contest");
     } finally {
       this._dbConnection.close();
     }
   }
   
   public async updateContest(input:UpdateContestInput){
-    //perguntar Caio: onde colocar a interface que usei no parametro?
-
+    
     const setStatementCollumns = [] //copiei da Round, gostei.
 
     if(input.initialDate){
@@ -81,12 +98,7 @@ export default class ContestRepository {
     if (input.active != null) {
         setStatementCollumns.push("active =:active")
     }
-
-
     const query =`UPDATE Contests SET ${setStatementCollumns.join(",")} WHERE id=:id`
-
-
-  
         const result = await this._dbConnection.query(
             query,
             {
@@ -104,10 +116,8 @@ export default class ContestRepository {
           return result
  
   }
-
-
-
-  //perguntar caio: passar parametros em forma de objeto é melhor por conta de ser chave/valor, quando passei os argumentos soltos tive problemas em casos onde nao precisava passar todos os argumentos, pq o js interpreta eles em ordem entao quando defini a função para receber (id, inicial, final, active) tive problemas em caso onde por ex eu n quisesse passar um desses parametros ex: (id, active) pois o id passava a ser considerado o segundo parametro(initial)
 }
+
+//nao tipei createContest, updateContest e deleteContestById por que eleas retornam result que estavamos tipando como any, pergintar o que fazer
 
 

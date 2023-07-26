@@ -23,9 +23,11 @@
   },
   "homepage": "https://github.com/Mariano-SI/Projeto-Mentoria-Backend#readme",
   "dependencies": {
+    "guid-typescript": "^1.0.9",
     "mssql": "^9.1.1",
     "sequelize": "^6.30.0",
-    "sequelize-cli": "^6.6.0"
+    "sequelize-cli": "^6.6.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.18.6",

@@ -10,7 +10,7 @@ function app(){
 
 
   
-    const contest = new UpdateContestInput({id:"A7ADE82D-CF6B-4DBB-8562-7F70B288E498", active: false})
-    teste.createContest()
+    teste.selectAllContests().then((result)=> console.log(result))
+
 }
 app()
