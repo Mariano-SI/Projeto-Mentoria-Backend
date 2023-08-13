@@ -1,10 +1,13 @@
 import { QueryTypes, Sequelize } from "sequelize";
-import { UpdateContestInput } from "../domain/dtos/contests/updateContestInput";
-import { ContestEntity } from "../domain/entities/ContestEntity";
-
-export default class ContestRepository {
+import { UpdateContestInput } from "../core/domain/dtos/contests/updateContestInput";
+import { ContestEntity } from "../core/domain/entities/ContestEntity";
+import { injectable, inject } from "tsyringe";
+import IContestRepository from "../core/domain/repositories/IContestRepository";
+@injectable()
+export default class ContestRepository implements IContestRepository{
   private _dbConnection: Sequelize;
-  constructor(dbConnection: Sequelize) {
+  
+  constructor(@inject('Sequelize') dbConnection: Sequelize ) {
     this._dbConnection = dbConnection;
   }
 
@@ -15,10 +18,9 @@ export default class ContestRepository {
       if (result && result.length > 0) {
         return result.map((item) => new ContestEntity(item.id, new Date(item.initial_date), new Date(item.final_date), item.active));
       } else {
-        return []; // Retorna um array vazio caso não haja resultados.
+        return [];
       }
     } catch (error) {
-      console.log(error)
       throw new Error("Erro ao selecionar contests");
     } finally {
       this._dbConnection.close();
@@ -26,7 +28,7 @@ export default class ContestRepository {
   }
 
   //Perguntar pro caio pq estamos tipando com classe ao inves de usar uma type ou interface
-  public async selectConstestById(id: string): Promise<ContestEntity | undefined> {
+  public async selectConstestById(id: string): Promise<ContestEntity | null> {
     try {
       const result: any[] = await this._dbConnection.query(`SELECT * FROM Contests WHERE id=:id`, {
         replacements: {
@@ -34,8 +36,9 @@ export default class ContestRepository {
         },
       });
 
-      if (result && result.length > 0) {
+      if (result && result[0] && result[0].length > 0) {
         const contestData = result[0][0];
+
 
         const contest = new ContestEntity(
           contestData.id,
@@ -45,7 +48,10 @@ export default class ContestRepository {
         );
   
         return contest;
-      } 
+      }else{
+        return null;
+      }
+
     } catch (error) {
       throw(error)
     } finally{
@@ -53,13 +59,11 @@ export default class ContestRepository {
     }
   }
 
-  public async createContest() {
+  public async createContest(): Promise<void> {
     try {
       const result = await this._dbConnection.query(
         "INSERT INTO Contests DEFAULT VALUES"
       );
-      console.log(result)
-      return result;
     } catch (error) {
       throw new Error("Não foi possivel criar o contest");
     } finally {
@@ -67,7 +71,7 @@ export default class ContestRepository {
     }
   }
 
-  public async deleteContestById(id: string) {
+  public async deleteContestById(id: string): Promise<void> {
     try {
       const result = await this._dbConnection.query(
         "DELETE FROM Contests WHERE id=:id",
@@ -77,7 +81,7 @@ export default class ContestRepository {
           },
         }
       );
-      return result;
+
     } catch (error) {
       throw new Error("Não foi possivel deletar o contest");
     } finally {
@@ -85,9 +89,9 @@ export default class ContestRepository {
     }
   }
   
-  public async updateContest(input:UpdateContestInput){
+  public async updateContest(input:UpdateContestInput): Promise<void>{
     
-    const setStatementCollumns = [] //copiei da Round, gostei.
+    const setStatementCollumns = []
 
     if(input.initialDate){
         setStatementCollumns.push("initial_date= :initialDate")
@@ -113,8 +117,6 @@ export default class ContestRepository {
           if(result[1] === 0){
             throw new Error("Nenhum registro foi encontrado");
           }
-          return result
- 
   }
 }
 

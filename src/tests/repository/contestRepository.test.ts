@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize";
 import ContestRepository from "../../repository/contestRepository"
-import { UpdateContestInput } from "../../domain/dtos/contests/updateContestInput";
-import { ContestEntity } from "../../domain/entities/ContestEntity";
+import { UpdateContestInput } from "../../core/domain/dtos/contests/updateContestInput";
+import { ContestEntity } from "../../core/domain/entities/ContestEntity";
 
 
 jest.mock("sequelize",()=>{
@@ -84,6 +84,7 @@ describe("contest repository", ()=>{
           expect(contests[index].final_date).toEqual(new Date(mockContest.final_date));
           expect(contests[index].active).toBe(mockContest.active);
         });
+        //nao usar foreach em teste, um só é suficiente
       });
 
     it("should return an empty array when there are no contests", async () => {
@@ -181,7 +182,7 @@ describe("contest repository", ()=>{
   
         //expect(connection.query).toHaveBeenCalledTimes(1); // novamente nao chama uma vez mas nao sei porque
         expect(connection.query).toHaveBeenCalledWith("INSERT INTO Contests DEFAULT VALUES"); 
-        //expect(connection.close).toHaveBeenCalledTimes(1); //aqui tbm
+        expect(connection.close).toBeCalled();
         expect(result).toBeUndefined(); 
       });
 
@@ -194,10 +195,8 @@ describe("contest repository", ()=>{
         });
         connection.query = jest.fn().mockRejectedValueOnce(new Error("Erro na inserção"));
 
-  
         const contestRepository = new ContestRepository(connection);
   
-
         await expect(contestRepository.createContest()).rejects.toThrow(Error);
       });  
 })

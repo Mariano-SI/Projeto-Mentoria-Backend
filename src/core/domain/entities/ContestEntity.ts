@@ -10,6 +10,6 @@ export class ContestEntity {
         this.id = id;
         this.initial_date = initial_date;
         this.final_date = final_date;
-        this.active = active
+        this.active = active;
     }
 }
