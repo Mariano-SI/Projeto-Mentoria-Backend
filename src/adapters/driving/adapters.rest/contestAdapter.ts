@@ -2,8 +2,10 @@ import { Request, Response } from 'express'
 import { Sequelize } from "sequelize";
 import contestService from '../../../core/application/services/contestsServices';
 import ContestRepository from '../../../repository/contestRepository';
-import IContestService from '../../../core/domain/repositories/IContestService';
-import {injectable, inject} from 'tsyringe'
+import IContestService from '../../../core/domain/services/IContestService';
+import {injectable, inject, autoInjectable} from 'tsyringe'
+import { IContestAdapter } from '../../../core/domain/adapters/IContestAdapter';
+import ContestService from '../../../core/application/services/contestsServices';
 const express = require('express');
 
 
@@ -12,12 +14,12 @@ const express = require('express');
 //o que fazer com os erros? eles retornam essa msg ou retorna a que for capturada
 
 
-@injectable()
-class ContestAdapter {
+@autoInjectable()
+export default class ContestAdapter implements IContestAdapter{
 
   public _router;
   private _contestService: IContestService;
-  constructor(@inject('ContestService')contestService: IContestService) {
+  constructor(@inject('ContestService')contestService: ContestService) {
     this._contestService = contestService;
     this._router = express.Router();
     this.initializeRoutes();

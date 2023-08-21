@@ -3,9 +3,9 @@ import ContestRepository from '../../../repository/contestRepository';
 import { ContestEntity } from '../../domain/entities/ContestEntity';
 import { UpdateContestInput } from '../../domain/dtos/contests/updateContestInput';
 import IContestRepository from '../../domain/repositories/IContestRepository';
-import {injectable, inject} from 'tsyringe'
+import {injectable, inject, autoInjectable} from 'tsyringe'
 
-@injectable()
+@autoInjectable()
 export default class ContestService {
   private _contestRepository: IContestRepository;
 

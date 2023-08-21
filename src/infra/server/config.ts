@@ -1,9 +1,15 @@
+import "reflect-metadata"
+import registerContestRoutes from "../../adapters/driving/adapters.rest/routes/contestRoutes";
+import ContestAdapter from "../../adapters/driving/adapters.rest/contestAdapter";
+import { container } from "tsyringe";
+
+
 const express = require('express');
 
 const app = express();
 
-
-app.use('/contests', require("../../adapters/driving/adapters.rest/contestAdapter"));
+registerContestRoutes(app);
+app.use('/contests', container.resolve(ContestAdapter));
 
 /* Suponha que contestService seja a instância do ContestService
 const contestRouter = new ContestRouter(contestService);
