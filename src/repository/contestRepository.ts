@@ -7,8 +7,11 @@ import IContestRepository from "../core/domain/repositories/IContestRepository";
 export default class ContestRepository implements IContestRepository{
   private _dbConnection: Sequelize;
   
-  constructor(@inject('Sequelize') dbConnection: Sequelize ) {
-    this._dbConnection = dbConnection;
+  constructor() {
+    this._dbConnection =  new Sequelize("mentoria-db", "Mariano", "m-88443244",{
+      host: "mentoria-server.database.windows.net",
+      port: 1433,
+      dialect:"mssql"})
   }
 
   public async selectAllContests():Promise<ContestEntity[]> {
@@ -26,7 +29,7 @@ export default class ContestRepository implements IContestRepository{
       this._dbConnection.close();
     }
   }
-
+  
   //Perguntar pro caio pq estamos tipando com classe ao inves de usar uma type ou interface
   public async selectConstestById(id: string): Promise<ContestEntity | null> {
     try {

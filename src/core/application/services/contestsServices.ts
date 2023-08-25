@@ -4,9 +4,10 @@ import { ContestEntity } from '../../domain/entities/ContestEntity';
 import { UpdateContestInput } from '../../domain/dtos/contests/updateContestInput';
 import IContestRepository from '../../domain/repositories/IContestRepository';
 import {injectable, inject, autoInjectable} from 'tsyringe'
+import IContestService from '../../domain/services/IContestService';
 
-@autoInjectable()
-export default class ContestService {
+@injectable()
+export default class ContestService implements IContestService {
   private _contestRepository: IContestRepository;
 
   constructor(@inject('ContestRepository') contestRepository : IContestRepository) {

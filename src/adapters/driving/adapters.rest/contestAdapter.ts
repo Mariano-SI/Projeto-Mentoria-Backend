@@ -3,7 +3,7 @@ import { Sequelize } from "sequelize";
 import contestService from '../../../core/application/services/contestsServices';
 import ContestRepository from '../../../repository/contestRepository';
 import IContestService from '../../../core/domain/services/IContestService';
-import {injectable, inject, autoInjectable} from 'tsyringe'
+import {injectable, inject, autoInjectable, singleton} from 'tsyringe'
 import { IContestAdapter } from '../../../core/domain/adapters/IContestAdapter';
 import ContestService from '../../../core/application/services/contestsServices';
 const express = require('express');
@@ -14,23 +14,24 @@ const express = require('express');
 //o que fazer com os erros? eles retornam essa msg ou retorna a que for capturada
 
 
-@autoInjectable()
+@singleton()
 export default class ContestAdapter implements IContestAdapter{
 
   public _router;
   private _contestService: IContestService;
-  constructor(@inject('ContestService')contestService: ContestService) {
+  constructor(@inject('ContestService') contestService: IContestService) {
     this._contestService = contestService;
     this._router = express.Router();
-    this.initializeRoutes();
+    //this.initializeRoutes();
   }
 
-  initializeRoutes() {
+  public initializeRoutes() {
     this._router.get('/', this.getAllContests.bind(this));
     this._router.get('/:id', this.getContestById.bind(this));
     this._router.post('/', this.createContest.bind(this));
     this._router.patch('/:id', this.updateContest.bind(this));
     this._router.delete('/:id', this.deleteContest.bind(this));
+    return this._router;
   }
 
   async getAllContests(req:Request, res: Response) {
@@ -100,13 +101,7 @@ export default class ContestAdapter implements IContestAdapter{
     }
   }
 
-  /*createConnection() {
-    return new Sequelize("aaaaaaaaaaaaaaaaa", "bbbbbbbbbbbb", "m-88443244",{
-      host: "mentoria-server.database.windows.net",
-      port: 1433,
-      dialect: "mssql"
-    });
-  }*/
+
 }
 
 module.exports = ContestAdapter;
