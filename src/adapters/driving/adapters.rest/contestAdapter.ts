@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Sequelize } from "sequelize";
 import contestService from '../../../core/application/services/contestsServices';
-import ContestRepository from '../../../repository/contestRepository';
+import ContestRepository from '../../driven/adapter.database/repository/contestRepository';
 import IContestService from '../../../core/domain/services/IContestService';
 import {injectable, inject, autoInjectable, singleton} from 'tsyringe'
 import { IContestAdapter } from '../../../core/domain/adapters/IContestAdapter';

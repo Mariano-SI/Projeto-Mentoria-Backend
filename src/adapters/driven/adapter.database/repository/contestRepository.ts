@@ -1,22 +1,22 @@
 import { QueryTypes, Sequelize } from "sequelize";
-import { UpdateContestInput } from "../core/domain/dtos/contests/updateContestInput";
-import { ContestEntity } from "../core/domain/entities/ContestEntity";
+import { UpdateContestInput } from "../../../../core/domain/dtos/contests/updateContestInput";
+import { ContestEntity } from "../../../../core/domain/entities/ContestEntity";
 import { injectable, inject } from "tsyringe";
-import IContestRepository from "../core/domain/repositories/IContestRepository";
+import IContestRepository from "../../../../core/domain/repositories/IContestRepository";
+import { DatabaseContext } from "../context/DatabaseContext";
+
+
 @injectable()
 export default class ContestRepository implements IContestRepository{
-  private _dbConnection: Sequelize;
-  
-  constructor() {
-    this._dbConnection =  new Sequelize("mentoria-db", "Mariano", "m-88443244",{
-      host: "mentoria-server.database.windows.net",
-      port: 1433,
-      dialect:"mssql"})
+  private _databaseContext: Sequelize;
+
+  constructor(@inject('DatabaseContext') databaseContext: DatabaseContext) {
+    this._databaseContext =  databaseContext.getSequelizeInstance();
   }
 
   public async selectAllContests():Promise<ContestEntity[]> {
     try {
-      const result:any[] = (await this._dbConnection.query("SELECT * FROM Contests"))[0];
+      const result:any[] = (await this._databaseContext.query("SELECT * FROM Contests"))[0];
 
       if (result && result.length > 0) {
         return result.map((item) => new ContestEntity(item.id, new Date(item.initial_date), new Date(item.final_date), item.active));
@@ -26,14 +26,14 @@ export default class ContestRepository implements IContestRepository{
     } catch (error) {
       throw new Error("Erro ao selecionar contests");
     } finally {
-      this._dbConnection.close();
+      this._databaseContext.close();
     }
   }
   
   //Perguntar pro caio pq estamos tipando com classe ao inves de usar uma type ou interface
   public async selectConstestById(id: string): Promise<ContestEntity | null> {
     try {
-      const result: any[] = await this._dbConnection.query(`SELECT * FROM Contests WHERE id=:id`, {
+      const result: any[] = await this._databaseContext.query(`SELECT * FROM Contests WHERE id=:id`, {
         replacements: {
           id: id,
         },
@@ -58,25 +58,25 @@ export default class ContestRepository implements IContestRepository{
     } catch (error) {
       throw(error)
     } finally{
-        this._dbConnection.close()
+        this._databaseContext.close()
     }
   }
 
   public async createContest(): Promise<void> {
     try {
-      const result = await this._dbConnection.query(
+      const result = await this._databaseContext.query(
         "INSERT INTO Contests DEFAULT VALUES"
       );
     } catch (error) {
       throw new Error("Não foi possivel criar o contest");
     } finally {
-      this._dbConnection.close();
+      this._databaseContext.close();
     }
   }
 
   public async deleteContestById(id: string): Promise<void> {
     try {
-      const result = await this._dbConnection.query(
+      const result = await this._databaseContext.query(
         "DELETE FROM Contests WHERE id=:id",
         {
           replacements: {
@@ -88,7 +88,7 @@ export default class ContestRepository implements IContestRepository{
     } catch (error) {
       throw new Error("Não foi possivel deletar o contest");
     } finally {
-      this._dbConnection.close();
+      this._databaseContext.close();
     }
   }
   
@@ -106,7 +106,7 @@ export default class ContestRepository implements IContestRepository{
         setStatementCollumns.push("active =:active")
     }
     const query =`UPDATE Contests SET ${setStatementCollumns.join(",")} WHERE id=:id`
-        const result = await this._dbConnection.query(
+        const result = await this._databaseContext.query(
             query,
             {
               replacements: {

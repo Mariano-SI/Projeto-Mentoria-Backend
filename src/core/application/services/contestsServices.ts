@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize';
-import ContestRepository from '../../../repository/contestRepository'; 
+import ContestRepository from '../../../adapters/driven/adapter.database/repository/contestRepository'; 
 import { ContestEntity } from '../../domain/entities/ContestEntity';
 import { UpdateContestInput } from '../../domain/dtos/contests/updateContestInput';
 import IContestRepository from '../../domain/repositories/IContestRepository';

@@ -1,4 +1,4 @@
-import ContestRepository from "./repository/contestRepository"
+import ContestRepository from "./adapters/driven/adapter.database/repository/contestRepository"
 import { UpdateContestInput } from "./core/domain/dtos/contests/updateContestInput"
 import {Sequelize} from 'sequelize'
 import { server } from "./infra/server/config";

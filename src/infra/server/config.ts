@@ -4,8 +4,10 @@ import ContestAdapter from "../../adapters/driving/adapters.rest/contestAdapter"
 import { container } from "tsyringe";
 import { registerDependency } from "../dependencyInjection/config";
 
-
+const dotenv= require('dotenv')
 const express = require('express');
+dotenv.config();
+
 registerDependency();
 const app = express();
 
