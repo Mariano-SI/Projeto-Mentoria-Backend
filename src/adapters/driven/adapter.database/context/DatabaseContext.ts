@@ -1,18 +1,19 @@
 import { Sequelize } from 'sequelize';
-import { singleton } from 'tsyringe';
+import { inject, singleton } from 'tsyringe';
 
 @singleton()
 export class DatabaseContext {
     private sequelize: Sequelize;
 
-    private environment: any = process.env;
+    private _environment;
 
 
-    constructor() {
-        this.sequelize =  new Sequelize(this.environment.DATABASE_NAME, this.environment.DATABASE_USERNAME, this.environment.DATABASE_PASSWORD,{
-            host: this.environment.DATABASE_HOST,
-            port: this.environment.DATABASE_PORT,
-            dialect:this.environment.DATABASE_DIALECT
+    constructor(@inject('EnvironmentVariables') environment:any) {
+        this._environment = environment;
+        this.sequelize =  new Sequelize(this._environment.environmentVariables.databaseName, this._environment.environmentVariables.databaseUserName, this._environment.environmentVariables.databasePassword,{
+            host: this._environment.environmentVariables.databaseHost,
+            port: this._environment.environmentVariables.databasePort,
+            dialect:this._environment.environmentVariables.databaseDialect
         });
     }
 

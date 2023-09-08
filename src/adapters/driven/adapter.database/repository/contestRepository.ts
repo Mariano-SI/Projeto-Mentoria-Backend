@@ -5,7 +5,6 @@ import { injectable, inject } from "tsyringe";
 import IContestRepository from "../../../../core/domain/repositories/IContestRepository";
 import { DatabaseContext } from "../context/DatabaseContext";
 
-
 @injectable()
 export default class ContestRepository implements IContestRepository{
   private _databaseContext: Sequelize;
@@ -25,12 +24,10 @@ export default class ContestRepository implements IContestRepository{
       }
     } catch (error) {
       throw new Error("Erro ao selecionar contests");
-    } finally {
-      this._databaseContext.close();
     }
   }
   
-  //Perguntar pro caio pq estamos tipando com classe ao inves de usar uma type ou interface
+
   public async selectConstestById(id: string): Promise<ContestEntity | null> {
     try {
       const result: any[] = await this._databaseContext.query(`SELECT * FROM Contests WHERE id=:id`, {
@@ -57,8 +54,6 @@ export default class ContestRepository implements IContestRepository{
 
     } catch (error) {
       throw(error)
-    } finally{
-        this._databaseContext.close()
     }
   }
 
@@ -87,8 +82,6 @@ export default class ContestRepository implements IContestRepository{
 
     } catch (error) {
       throw new Error("Não foi possivel deletar o contest");
-    } finally {
-      this._databaseContext.close();
     }
   }
   

@@ -7,10 +7,11 @@ import ContestService from '../../core/application/services/contestsServices';
 import { IContestAdapter } from '../../core/domain/adapters/IContestAdapter';
 import ContestAdapter from '../../adapters/driving/adapters.rest/contestAdapter'
 import { DatabaseContext } from '../../adapters/driven/adapter.database/context/DatabaseContext';
+import { EnvironmentVariables } from '../environment/EnvironmentVariables';
 
 
 export const registerDependency = ()=>{
-    //container.registerSingleton<Sequelize>('Sequelize', Sequelize);
+    container.registerSingleton('EnvironmentVariables', EnvironmentVariables)
     container.registerSingleton('DatabaseContext', DatabaseContext);
     container.register<IContestRepository>('ContestRepository', ContestRepository);
     container.register<IContestService>('ContestService', ContestService);
