@@ -6,7 +6,8 @@ export class EnvironmentVariables {
   private environment: any = process.env;  
     environmentVariables: { databaseName: string; databaseUserName: string; databasePassword: string; databasePort: number; databaseHost: string; databaseDialect: StringifyOptions; };
 
-  constructor() {
+    constructor() {
+    console.log(this.environment.DATABASE_NAME);
     this.environmentVariables={
          databaseName : this.environment.DATABASE_NAME,
          databaseUserName : this.environment.DATABASE_USERNAME,

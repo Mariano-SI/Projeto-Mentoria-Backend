@@ -35,7 +35,6 @@ export default class ContestAdapter implements IContestAdapter{
   }
 
   async getAllContests(req:Request, res: Response) {
-    //const connection = this.createConnection();
     try {
       const contests = await this._contestService.getAllContests();
       res.json(contests);

@@ -13,14 +13,6 @@ export default class ContestService implements IContestService {
   constructor(@inject('ContestRepository') contestRepository : IContestRepository) {
     this._contestRepository = contestRepository;
   }
-  /*como vamos passar a conexão para o reporitorio?
-  antes ele recebia assim: 
-  export default class ContestService {
-  private _contestRepository: ContestRepository;
-
-  constructor(dbConnection: Sequelize) {
-    this._contestRepository = new ContestRepository(dbConnection);
-  }*/
 
   public async getAllContests(): Promise<ContestEntity[]> {
     try {
