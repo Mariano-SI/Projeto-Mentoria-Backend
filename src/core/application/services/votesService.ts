@@ -13,7 +13,7 @@ export default class VotesService implements IVoteService {
     mas fiquei na duvida se deveria usar o repository ou o service
   */
 
-  constructor(@inject('VoteRepository') voteRepository: IVoteRepository, @inject('ContestRepository') contestRepository : IContestRepository) {
+  constructor(@inject('VotesRepository') voteRepository: IVoteRepository, @inject('ContestRepository') contestRepository : IContestRepository) {
     this._voteRepository = voteRepository;
     this._contestRepository = contestRepository;
   }

@@ -5,6 +5,7 @@ import { registerDependency } from "../dependencyInjection/config";
 import EnvironmentVariables from "../environment/EnvironmentVariables";
 import { DatabaseContext } from "../../adapters/driven/adapter.database/context/DatabaseContext";
 import VoteRepository from "../../adapters/driven/adapter.database/repository/votesRepository";
+import VotesAdapter from "../../adapters/driving/adapters.rest/votesAdapter";
 
 const dotenv= require('dotenv')
 const express = require('express');
@@ -15,6 +16,7 @@ const app = express();
 
 
 app.use('/contests', container.resolve(ContestAdapter).initializeRoutes());
+app.use('/votes', container.resolve(VotesAdapter).initializeRoutes());
 
 
 export const server = app.listen(3000, function(){

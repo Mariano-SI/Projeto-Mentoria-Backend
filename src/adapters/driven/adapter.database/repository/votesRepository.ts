@@ -6,7 +6,7 @@ import { DatabaseContext } from "../context/DatabaseContext";
 import { UpdateVoteInput } from "../../../../core/domain/dtos/votes/updateVoteInput";
 
 @injectable()
-export default class VoteRepository implements IVoteRepository {
+export default class VotesRepository implements IVoteRepository {
   private _databaseContext: Sequelize;
 
   constructor(@inject('DatabaseContext') databaseContext: DatabaseContext) {
@@ -16,7 +16,7 @@ export default class VoteRepository implements IVoteRepository {
   public async getAllVotes(): Promise<VoteEntity[]> {
     try {
       const result: any[] = (await this._databaseContext.query("SELECT * FROM Votes"))[0];
-
+      
       if (result && result.length > 0) {
         return result.map((item) => new VoteEntity(item.id, item.user_id, item.participant_id, item.contest_id, new Date(item.creation_date)));
       } else {
