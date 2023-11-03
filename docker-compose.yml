@@ -1,5 +1,13 @@
 version: '3'
 services:
+  rabbitmq:
+      image: "rabbitmq:management"  # Use the official RabbitMQ image with the management plugin
+      ports:
+        - "5672:5672"  # RabbitMQ default port
+        - "15672:15672"  # RabbitMQ management UI port
+
+      volumes:
+        - ./rabbitmq-data:/var/lib/rabbitmq  # Store RabbitMQ data on the host machine
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
