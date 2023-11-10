@@ -9,40 +9,28 @@ import { DatabaseContext } from "./adapters/driven/adapter.database/context/Data
 import EnvironmentVariables from "./infra/environment/EnvironmentVariables";
 import amqp from 'amqplib/callback_api' 
 
-amqp.connect('amqp://localhost:5672', function (err, conn) {
-    conn.createChannel(function (err, ch) {
-        const q = 'hello';
-        const msg = 'Hello World 123!';
-        ch.assertQueue(q, { durable: false });     
-        ch.sendToQueue(q, new Buffer(msg));
-        console.log(" [x] Sent %s", msg);
-    });
-    setTimeout(function () { conn.close(); }, 500);
-});
-amqp.connect('amqp://localhost:5672', function (err, conn) {
-    conn.createChannel(function (err, ch) {
-        var q = 'hello';
+import RabbitmqConfig from './infra/server/rabbitmqConfig';
 
-        ch.assertQueue(q, { durable: false });
-        ch.prefetch(1);
-        console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q);
-        ch.consume(q, function (msg) {
-            if(msg){
-                console.log(" [x] Received %s", msg.content.toString());
-            }
-        }, { noAck: true });
-    });
-});
-//server;
+const rabbitmq = new RabbitmqConfig();
 
+(async () => {
+  await rabbitmq.connect('amqp://localhost:5672');
+  await rabbitmq.createChannel();
 
-/*function app(){
-    const teste = new ContestRepository( new Sequelize("mentoria-db", "Mariano", "m-88443244",{
-        host: "mentoria-server.database.windows.net",
-        port: 1433,
-        dialect:"mssql"
-    }))
- 
-    teste.selectAllContests().then((result)=> console.log(result))
-}
-app()*/
+  const queue = 'hello';
+  const message = 'Mariano 123 teste!';
+
+  rabbitmq.sendMessage(queue, message);
+
+  rabbitmq.receiveMessage(queue, (msg:any) => {
+    console.log("Received message:", msg);
+  });
+
+  setTimeout(() => {
+    if(rabbitmq.connection){
+        rabbitmq.connection.close();
+    }
+  }, 500);
+})();
+server
+;
